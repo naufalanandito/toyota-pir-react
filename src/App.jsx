@@ -17,15 +17,46 @@ function App() {
   const [partUploadKey, setPartUploadKey] = useState(0);
 
   const handleModelImage = useCallback((hash) => {
-    setModelHash(hash);
-    setCarImageUploaded(!!hash);
+    // `hash` is actually the uploaded filename (kept prop name for
+    // backward compatibility). Try to resolve it to a model key from
+    // dummyData by checking:
+    // 1) exact key match
+    // 2) filename contains the model key (case-insensitive)
+    // 3) filename contains the model's "Model Name" (case-insensitive)
+    const uploadedName = String(hash || '');
+    let resolvedKey = null;
+    if (dummyData[uploadedName]) {
+      resolvedKey = uploadedName;
+    } else {
+      const uploadedLower = uploadedName.toLowerCase();
+      for (const key of Object.keys(dummyData)) {
+        if (uploadedLower.includes(key.toLowerCase())) {
+          resolvedKey = key;
+          break;
+        }
+        const modelName = String(dummyData[key]["Model Name"] || '').toLowerCase();
+        if (modelName && uploadedLower.includes(modelName)) {
+          resolvedKey = key;
+          break;
+        }
+        // also check first word of model name (e.g., 'Yaris', 'Fortuner')
+        const firstWord = modelName.split('\n')[0].split(' ')[0];
+        if (firstWord && uploadedLower.includes(firstWord)) {
+          resolvedKey = key;
+          break;
+        }
+      }
+    }
+
+    setModelHash(resolvedKey || uploadedName);
+    setCarImageUploaded(!!uploadedName);
     setPartImageUploaded(false);
     setPartHash('');
     setSelectedPartNo(null);
-    if (dummyData[hash]) {
+    if (resolvedKey && dummyData[resolvedKey]) {
       setModelInfo({
-        name: dummyData[hash]["Model Name"] || '',
-        year: dummyData[hash]["Model Year"] || ''
+        name: dummyData[resolvedKey]["Model Name"] || '',
+        year: dummyData[resolvedKey]["Model Year"] || ''
       });
     } else {
       setModelInfo({ name: '', year: '' });
@@ -58,8 +89,21 @@ function App() {
   const partList = (modelHash && category && dummyData[modelHash] && dummyData[modelHash][category]) ? dummyData[modelHash][category] : null;
   let matchedPartNo = null;
   let matchedPart = null;
+  // Matching logic: previously we matched by SHA-256 hash. After the update
+  // ImageUpload now provides the uploaded file name via `partHash` (still
+  // named partHash for backward compatibility). We consider a part matched
+  // when the part has a "Match" field and the uploaded filename contains
+  // that string (case-insensitive). If a part still has a Hash property,
+  // we keep the exact-hash fallback.
   if (partList && partHash) {
+    const uploadedName = String(partHash || '').toLowerCase();
     for (const [no, part] of Object.entries(partList)) {
+      if (part.Match && uploadedName.includes(String(part.Match).toLowerCase())) {
+        matchedPartNo = no;
+        matchedPart = part;
+        break;
+      }
+      // fallback to legacy exact hash match if present
       if (part.Hash && part.Hash === partHash) {
         matchedPartNo = no;
         matchedPart = part;

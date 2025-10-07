@@ -1,17 +1,17 @@
 {
-  "e3f623c27c1ceefa296fbc47e08d583f13de2760b4c0ce3d1eb85276e6f131fe": {
+  "yaris": {
     "Model Name": "Yaris Cross S Hybrid",
     "Model Year": 2023,
     "TCO": {
       "P5401-BYA0Z": {
-        "Hash": "bf1c0a2604f0af10c3a13d9d86cc8bc9b272b2af372a5529c13e2e94d04daf65",
+        "Match": "yaris-grille",
         "Part Name": "Front Grille Sporty Ornament, Set",
         "Image": "P5401-BYA0Z.png",
         "Stock": "Available",
         "Retail Price": "Rp1,200,000"
       },
       "P5405-BYA0K": {
-        "Hash": "f21cba6168a751cc629421dc8f5adc54a5488185af15716344b4a6aa4f00e0cc",
+        "Match": "yaris-ducktail",
         "Part Name": "Ducktail, Set",
         "Image": "P5405-BYA0K.png",
         "Stock": "Available",
@@ -25,7 +25,7 @@
       }
     }
   },
-  "195fb923aa59142221844a8fc08d29234dcb8d4e16c5f60411035bc79ef7a526": {
+  "fortuner": {
     "Model Name": "Fortuner Facelift VRZ 2.8 4x2",
     "Model Year": 2024,
     "TCO": {
@@ -36,6 +36,7 @@
         "Retail Price": "Rp700,000"
       },
       "15812-TA338": {
+        "Match": "fortuner-rear",
         "Part Name": "RR BMP ORN,SA, SET",
         "Image": "15812-TA338.png",
         "Stock": "Available",

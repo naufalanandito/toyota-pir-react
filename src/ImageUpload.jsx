@@ -1,38 +1,22 @@
 import React, { useRef, useState } from 'react';
 
 function ImageUpload({ label = 'Upload Image', onHash, hideHash }) {
-  const [imageHash, setImageHash] = useState('');
+  // We keep the prop name `onHash` for backward compatibility but now
+  // we send the uploaded file's name (string) instead of a SHA-256 hash.
+  const [imageName, setImageName] = useState('');
   const [preview, setPreview] = useState(null);
   const fileInputRef = useRef();
-
-  // Helper to read file as ArrayBuffer
-  const readFileAsArrayBuffer = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsArrayBuffer(file);
-    });
-  };
-
-  // Simple hash function (SHA-256)
-  async function getImageHash(file) {
-    const buffer = await readFileAsArrayBuffer(file);
-    const hashBuffer = await window.crypto.subtle.digest('SHA-256', buffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  }
 
   const handleChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       setPreview(URL.createObjectURL(file));
-      const hash = await getImageHash(file);
-      setImageHash(hash);
-      if (onHash) onHash(hash);
+      const name = file.name || '';
+      setImageName(name);
+      if (onHash) onHash(name);
     } else {
       setPreview(null);
-      setImageHash('');
+      setImageName('');
       if (onHash) onHash('');
     }
   };
