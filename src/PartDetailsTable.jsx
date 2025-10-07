@@ -53,7 +53,7 @@ function PartDetailsTable({ partNo, part, modelName }) {
       </table>
       {part.Image && (
         <img
-          src={`/assets/${part.Image}`}
+          src={`/toyota-pir-react/assets/${part.Image}`}
           alt={part['Part Name'] || 'Part'}
           style={{
             maxWidth: 200,
